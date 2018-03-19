@@ -41,4 +41,13 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+     .slider-wrapper{
+         position: relative;
+        width: 100%;
+        overflow: hidden;
+     }
+        
+</style>
+
 

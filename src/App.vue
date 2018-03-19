@@ -18,8 +18,10 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus" rel="stylesheet/stylus">
-   @import 'common/stylus/variable'
-   #app 
-      color:$color-theme;
+<style scoped lang="scss" >
+   @import 'common/style/variable';
+   #app {
+     color:$color-theme;
+   }
+      
 </style>
