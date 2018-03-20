@@ -44,9 +44,16 @@
           this._play();
         }
       }, 20);
+      window.addEventListener('resize',() => {
+          if(!this.slider){
+              return
+          }
+          this._setSliderWidth(true);
+          this.slider.refresh();
+      })
     },
     methods: {
-      _setSliderWidth() {
+      _setSliderWidth(Resize) {
         this.children = this.$refs.sliderGroup.children;
         let sliderWidth = this.$refs.slider.clientWidth;
         let width = 0;
@@ -56,7 +63,7 @@
           addClass(child, "slider-item");
           width += sliderWidth;
         }
-        if (this.loop) {
+        if (this.loop&&!Resize) {
           width += 2 * sliderWidth;
         }
         this.$refs.sliderGroup.style.width = width + "px";
@@ -78,6 +85,7 @@
           }
           this.currentPageIndex = pageIndex;
           if (this.autoPlay) {
+            clearTimeout(this.timer);
             this._play();
           }
         });
@@ -94,6 +102,9 @@
           this.slider.goToPage(pageIndex, 0, 400);
         }, this.interVal);
       }
+    },
+    destroyed(){
+        clearTimeout(this.timer);
     }
   };
 

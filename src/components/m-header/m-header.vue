@@ -19,6 +19,7 @@
     text-align: center;
     color: $color-theme;
     font-size: 0;
+    
     .icon {
       display: inline-block;
       width: 30px;
