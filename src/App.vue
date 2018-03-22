@@ -25,5 +25,4 @@ export default {
    #app {
      color:$color-theme;
    }
-      
 </style>
