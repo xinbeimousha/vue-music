@@ -21,8 +21,4 @@ export default {
 </script>
 
 <style scoped lang="scss" >
-   @import 'common/style/variable';
-   #app {
-     color:$color-theme;
-   }
 </style>

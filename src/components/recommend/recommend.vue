@@ -1,11 +1,12 @@
 <template>
   <div class="recommend">
-     <div class="recommend-content">
+     <scroll ref="sroll" class="recommend-content" :data="discList">
+        <div> 
          <div v-if="recommends.length" class="slider-wrapper">
              <slider>
                  <div v-for="item in recommends">
                  <a :href="item.linkUrl">
-                     <img :src="item.picUrl" alt="">
+                     <img @load="imageLoad" :src="item.picUrl" alt="">
                  </a>
              </div>
              </slider>
@@ -24,10 +25,11 @@
                 </li>
             </ul>
          </div>
+        </div>
           <div class="loading-container" v-show="!this.discList.length">
              <loading/>
          </div>
-     </div>
+     </scroll>
     
   </div>
 </template>
@@ -35,6 +37,7 @@
 import {getRecommend,getDiscList} from 'api/recommend';
 import {ERR_OK} from 'api/config';
 import Slider from 'base/slider/slider';
+import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 export default {
   data(){
@@ -45,9 +48,7 @@ export default {
   },
   created(){
       this._getRecommend();
-      setTimeout(()=>{
-          this._getDiscList();
-      },1000)
+      this._getDiscList();
   },
   methods:{
       _getRecommend(){
@@ -64,10 +65,16 @@ export default {
               }
               console.log(this.discList)
           })
+      },
+      imageLoad(){
+          if(!this.checkLoad){
+              this.$refs.sroll.refresh()
+          }
       }
   },
   components:{
       Slider,
+      Scroll,
       Loading
   }
 }
@@ -82,7 +89,7 @@ export default {
         bottom:0;
         .recommend-content{
             height:100%;
-            overflow-y: scroll;
+            overflow: hidden;
              .slider-wrapper{
                 position: relative;
                 width: 100%;
