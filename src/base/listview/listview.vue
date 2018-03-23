@@ -1,7 +1,7 @@
 <template>
-  <scroll :data="data" class="listview">
+  <scroll ref="listview" :data="data" class="listview">
       <ul>
-          <li class="list-group" v-for="group in data">
+          <li ref="listGroup" class="list-group" v-for="group in data">
               <h1 class="list-group-title">{{group.title}}</h1>
               <ul>
                   <li class="list-group-item" v-for="item in group.items">
@@ -11,16 +11,33 @@
               </ul>
           </li>
       </ul>
-      <div class="shortcutList">
+      <div class="shortcutList" 
+            @touchstart="_shortcutTouchStart"  
+            @touchmove.stop.prevent="_shortcutTouchMove">
           <ul>
-              <li class="item" v-for="item in shortcutList">{{item}}</li>
+              <li class="item" v-for="(item,index) in shortcutList" 
+              :data-index="index"
+              :class="{current:currentIndex===index}"
+              >
+                {{item}}
+              </li>
           </ul>
       </div>
   </scroll>
 </template>
 <script>
  import Scroll from 'base/scroll/scroll';
+ import {getData} from 'common/js/dom';
+ const ITEM_LEN = 18;
 export default {
+  data(){
+      return {
+          currentIndex:0
+      }
+  },
+  created(){
+      this.touch={}
+  },
   props:{
       data:{
           type:Array,
@@ -32,6 +49,26 @@ export default {
         return  this.data.map(group => {
               return group.title.substr(0,1)
           })
+      }
+  },
+  methods:{
+      _shortcutTouchStart(e){
+          let anchorIndex = getData(e.target,'index');
+          let firstTouch = e.touches[0];
+          this.touch.y1 = firstTouch.pageY;
+          this.touch.anchorIndex = anchorIndex;
+          this._scrollTo(anchorIndex);
+      },
+      _shortcutTouchMove(e){
+          let firstTouch = e.touches[0];
+          this.touch.y2 = firstTouch.pageY;
+          let delta = (this.touch.y2-this.touch.y1)/ITEM_LEN | 0
+          let anchorIndex = delta+ parseInt(this.touch.anchorIndex);
+          this._scrollTo(anchorIndex);
+
+      },
+      _scrollTo(index){
+        this.$refs.listview.scrollToElement(this.$refs.listGroup[index],0)
       }
   },
   components:{

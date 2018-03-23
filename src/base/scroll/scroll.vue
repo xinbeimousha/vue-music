@@ -44,13 +44,19 @@ export default {
       },
       refresh(){
           this.slider&&this.slider.refresh();
+      },
+      scrollTo(){
+          this.slider&&this.slider.scrollTo.apply(this.slider,arguments)
+      },
+      scrollToElement(){
+          this.slider&&this.slider.scrollToElement.apply(this.slider,arguments)
       }
   },
   watch:{
      data(){
          setTimeout(() => {
              this.refresh()
-         })
+         },20)
      }
   }
 }
