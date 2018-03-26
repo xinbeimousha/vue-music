@@ -19,6 +19,10 @@ export default {
       data:{
           type:Array,
           default:null
+      },
+      listenScroll:{
+          type:Boolean,
+          default:false
       }
   },
   mounted(){
@@ -31,25 +35,31 @@ export default {
           if(!this.$refs.wrapper){
               return
           }
-          this.slider = new BScroll(this.$refs.wrapper,{
+          this.scroll = new BScroll(this.$refs.wrapper,{
               probeType:this.probeType,
               click:this.click
           })
+          if(this.listenScroll){
+              const me = this;
+              this.scroll.on('scroll',pos => {
+                  me.$emit('scroll',pos)
+              })
+          }
       },
       disable(){
-          this.slider&&this.slider.disable();
+          this.scroll&&this.scroll.disable();
       },
       enable(){
-          this.slider&&this.slider.enable();
+          this.scroll&&this.scroll.enable();
       },
       refresh(){
-          this.slider&&this.slider.refresh();
+          this.scroll&&this.scroll.refresh();
       },
       scrollTo(){
-          this.slider&&this.slider.scrollTo.apply(this.slider,arguments)
+          this.scroll&&this.scroll.scrollTo.apply(this.scroll,arguments)
       },
       scrollToElement(){
-          this.slider&&this.slider.scrollToElement.apply(this.slider,arguments)
+          this.scroll&&this.scroll.scrollToElement.apply(this.scroll,arguments)
       }
   },
   watch:{
