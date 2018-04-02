@@ -1,8 +1,12 @@
 <template>
-  <div class="progress-bar" ref="progressBar">
+  <div class="progress-bar" ref="progressBar" @click="progressClick">
       <div class="bar-inner">
           <div class="progress" ref="progress"></div>
-          <div class="progress-btn-wrapper">
+          <div class="progress-btn-wrapper"
+            @touchstart="progressTouchStart"
+            @touchmove="progressTouchMove"
+            @touchend="progressTouchEnd"
+           >
               <div class="progress-btn" ref="progressBtn"></div>
           </div>
       </div>
@@ -19,13 +23,49 @@ export default {
             default:0
         }
     },
+    created(){
+        this.touch={}
+    },
+    mounted(){
+        this.barWidth = this.$refs.progressBar.clientWidth-BTN_WIDTH;
+    },
+    methods:{
+        progressTouchStart(e){
+            this.touch.initiated = true;
+            this.touch.startY = e.touches[0].pageX;
+            this.touch.left = this.$refs.progress.clientWidth;
+        },
+        progressTouchMove(e){
+            if(!this.touch.initiated){
+                return
+            }
+            const detalX = e.touches[0].pageX-this.touch.startY;
+            const offsetWidth =Math.min(this.$refs.progressBar.clientWidth-BTN_WIDTH,Math.max(0,this.touch.left+detalX));
+            this._offset(offsetWidth) 
+        },
+        progressTouchEnd(){
+            this.touch.initiated = false;
+            this._triggerPercent();
+        },
+        progressClick(e){
+            this._offset(e.offsetX);
+            this._triggerPercent();
+        },
+        // 告诉父组件滑动之后，当前的准确时间，实现实时拖动
+        _triggerPercent(){
+            const percent = this.$refs.progress.clientWidth/this.barWidth;
+            this.$emit('percentChange',percent);
+        },
+        _offset(offsetWidth){
+             this.$refs.progress.style.width = `${offsetWidth}px`;
+             this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px,0,0)`;
+        }
+    },
     watch:{
         percent(newPercent){
-            if(newPercent>=0){
-                const barWidth = this.$refs.progressBar.clientWidth-BTN_WIDTH;
-                const offsetWidth = barWidth*newPercent;
-                this.$refs.progress.style.width = `${offsetWidth}px`;
-                this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px,0,0)`;
+            if(newPercent>=0&&!this.touch.initiated){
+                const offsetWidth = this.barWidth*newPercent;
+                this._offset(offsetWidth)
             }
         }
     }
