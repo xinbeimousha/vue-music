@@ -26,9 +26,6 @@ export default {
     created(){
         this.touch={}
     },
-    mounted(){
-        this.barWidth = this.$refs.progressBar.clientWidth-BTN_WIDTH;
-    },
     methods:{
         progressTouchStart(e){
             this.touch.initiated = true;
@@ -48,12 +45,15 @@ export default {
             this._triggerPercent();
         },
         progressClick(e){
-            this._offset(e.offsetX);
+            const rect = this.$refs.progressBar.getBoundingClientRect();
+            const offsetWidth = e.pageX-rect.left
+            this._offset(offsetWidth);
             this._triggerPercent();
         },
         // 告诉父组件滑动之后，当前的准确时间，实现实时拖动
         _triggerPercent(){
-            const percent = this.$refs.progress.clientWidth/this.barWidth;
+            const barWidth = this.$refs.progressBar.clientWidth-BTN_WIDTH;
+            const percent = this.$refs.progress.clientWidth/barWidth;
             this.$emit('percentChange',percent);
         },
         _offset(offsetWidth){
@@ -64,7 +64,8 @@ export default {
     watch:{
         percent(newPercent){
             if(newPercent>=0&&!this.touch.initiated){
-                const offsetWidth = this.barWidth*newPercent;
+                const barWidth = this.$refs.progressBar.clientWidth-BTN_WIDTH;
+                const offsetWidth = barWidth*newPercent;
                 this._offset(offsetWidth)
             }
         }
