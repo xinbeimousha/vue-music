@@ -143,13 +143,6 @@ export default {
             let index = list.findIndex((item) => {
                 return item.id===this.currentSong.id
             })
-            if(index===-1){
-                for(let i=0;i<list.length;i++){
-                    if(list[i].id=97774){
-                        console.log(list[i].name)
-                    }
-                }
-            }
             this.setCurrentIndex(index)
         },
         end(){

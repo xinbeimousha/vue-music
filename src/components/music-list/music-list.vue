@@ -22,7 +22,7 @@
               @scroll="scroll"
               >
           <div class="song-list-wrapper">
-            <song-list @select="selectItem" :songs="songs"></song-list>   
+            <song-list @select="selectItem" :songs="songs" :rank="rank"></song-list>   
          </div>
          <div class="loading-container" v-show="!songs.length">
              <loading/>
@@ -36,9 +36,11 @@ import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 import {prefixStyle} from 'common/js/dom';
 import {mapActions} from'vuex';
+import {playlistMixin} from 'common/js/mixin';
 const RESERVED_HEIGHT = 44;
 const transform = prefixStyle('transform')
 export default {
+    mixins:[playlistMixin],
     props:{
         bgImg:{
             type:String,
@@ -51,14 +53,28 @@ export default {
         title:{
             type:String,
             default:''
-        }
+        },
+        rank:{
+            type:Boolean,
+            default:false
+        },
     },
     data(){
         return {
             scrollY:0
         }
     },
+     computed:{
+        bgStyle(){
+            return `background-image:url(${this.bgImg})`;
+        }
+    },
     methods:{
+        handlePlaylist(playlist){
+            const bottom = playlist.length>0?'60px':'';
+            this.$refs.list.$el.style.bottom = bottom;
+            this.$refs.list.refresh();
+        },
         selectItem(item,index){
             this.selectPlay({
                 list:this.songs,
@@ -88,11 +104,6 @@ export default {
         this.imageHeight= this.$refs.bgImg.clientHeight;
         this.minTranslateY = RESERVED_HEIGHT-this.imageHeight;
         this.$refs.list.$el.style.top = `${this.imageHeight}px`;
-    },
-    computed:{
-        bgStyle(){
-            return `background-image:url(${this.bgImg})`;
-        }
     },
     watch:{
         scrollY(newY){

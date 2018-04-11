@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
      <scroll ref="sroll" class="recommend-content" :data="discList">
         <div> 
          <div v-if="recommends.length" class="slider-wrapper">
@@ -40,7 +40,9 @@ import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 import {mapMutations} from 'vuex';
+import {playlistMixin} from 'common/js/mixin';
 export default {
+  mixins:[playlistMixin],
   data(){
       return {
           recommends:[],
@@ -52,6 +54,11 @@ export default {
       this._getDiscList();
   },
   methods:{
+      handlePlaylist(playlist){
+        const bottom = playlist.length>0?'60px':'';
+        this.$refs.recommend.style.bottom = bottom;
+        this.$refs.sroll.refresh();
+      },
       selectItem(item){
           this.$router.push({
               path:`/recommend/${item.dissid}`

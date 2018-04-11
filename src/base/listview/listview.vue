@@ -76,6 +76,9 @@ export default {
       }
   },
   methods:{
+      refresh(){
+          this.$refs.listview.refresh()
+      },
       shortcutTouchStart(e){
           let anchorIndex = getData(e.target,'index');
           let firstTouch = e.touches[0];
@@ -149,7 +152,6 @@ export default {
      },
      diff(newVal){
          let fixedTop = (newVal>0&&newVal<TITLE_HEIGHT)?newVal-TITLE_HEIGHT:0;
-         console.log(newVal)
          if(this.fixedTop === fixedTop){
              return;
          }
